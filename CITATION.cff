@@ -3,9 +3,9 @@ message: "If you use this repository, please cite it using the metadata below."
 title: "multimodal-fake-news-detection"
 type: software
 authors:
-  - family-names: "eli0040802-netizen"
+  - family-names: "eli-works"
     given-names: ""
-repository-code: "https://github.com/eli0040802-netizen/multimodal-fake-news-detection"
+repository-code: "https://github.com/eli-works/multimodal-fake-news-detection"
 abstract: >
   Research repository for multimodal fake news detection with a shared semantic
   bridge and bidirectional cross-modal attention. The repository is organized
