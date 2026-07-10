@@ -1,49 +1,89 @@
-# 基于共享语义桥与双向跨模态注意力的多模态假新闻检测模型
+# multimodal-fake-news-detection
 
-**English title**: A Multi-modal Fake News Detection Model with Shared Semantic Bridge and Bidirectional Cross-modal Attention
+> A research repository for multimodal fake news detection with a shared semantic bridge and bidirectional cross-modal attention.
 
-本仓库用于公开展示并持续记录一个面向多模态假新闻检测的研究项目，重点覆盖模型设计、代码实现、实验结果、消融分析和论文附属材料。项目当前聚焦于文本-图像双模态检测，不包含完整线上系统实现。
+## Overview
 
-## 项目定位
+This repository documents a complete research project on multimodal fake news detection, with emphasis on:
 
-社交媒体假新闻通常以文本和图像共同传播。仅依赖文本容易忽略误导性配图、图文语义偏移和跨模态冲突；仅依赖图像又难以理解文本中的立场表达、断言强度和上下文语义。因此，本项目关注如何联合建模文本内容、图像证据以及二者之间的一致性与互补关系。
+- model design
+- implementation details
+- experiment organization
+- ablation settings
+- reproducibility notes
+- paper supplementary materials
 
-本文提出一种基于共享语义桥与双向跨模态注意力的多模态假新闻检测模型。模型在文本侧结合 BiLSTM 与 Transformer 构建序列表示，在图像侧使用 EfficientNet-B0 提取视觉语义特征，并通过共享残差桥完成跨模态语义对齐，进一步利用双向跨模态注意力实现图文细粒度交互。
+The core model combines:
 
-## 核心贡献
+- a dual-path text encoder based on `BiLSTM + Transformer`
+- an image encoder based on `EfficientNet-B0`
+- a `Shared Residual Bridge` for coarse semantic alignment
+- a `Bidirectional Cross-modal Attention` module for fine-grained text-image interaction
 
-- 双路径文本编码：结合 BiLSTM 的局部上下文建模能力和 Transformer 的全局语义建模能力。
-- 共享语义桥：通过共享残差映射缓解文本特征与图像特征的语义空间差异。
-- 双向跨模态注意力：同时建模文本到图像、图像到文本的交互关系，以增强图文一致性和冲突线索捕捉。
-- 系统实验验证：在 Weibo、Gossip 和 CFND 三个数据集上进行主实验、单模态对比、消融实验和参数分析。
+The repository is intended to serve two purposes at the same time:
 
-## 模型流程
+1. a public-facing GitHub project that clearly explains the work
+2. supplementary material for a paper or thesis, so that others can understand and reproduce the model
+
+## Project Goal
+
+Fake news on social media is often expressed through both text and images. Text-only models may overlook misleading images, while image-only models may miss stance, context, or semantic contradiction in the text. This project studies how to jointly model text content, visual evidence, and the semantic consistency between them.
+
+The proposed method focuses on three design ideas:
+
+1. stronger text modeling through local and global sequence features
+2. a shared semantic bridge that reduces modality gap before fusion
+3. bidirectional cross-modal attention that captures text-to-image and image-to-text interaction
+
+## Main Contributions
+
+1. **Dual-path text encoder**
+   Combines `BiLSTM` for local contextual order modeling and `Transformer` for global semantic dependency modeling.
+
+2. **Shared semantic bridge**
+   Uses a shared residual mapping to align text and image representations in a lightweight way before cross-modal fusion.
+
+3. **Bidirectional cross-modal attention**
+   Models both text querying image features and image querying text features, improving consistency and conflict detection between modalities.
+
+4. **Systematic experiments**
+   Includes main experiments, unimodal comparisons, baseline comparisons, and ablation studies on `Weibo`, `Gossip`, and `CFND`.
+
+## Model Pipeline
 
 ```text
-输入文本 T 与图像 I
-  -> 文本分支: Embedding + BiLSTM + Transformer
-  -> 图像分支: EfficientNet-B0
-  -> 共享语义桥: Shared Residual Bridge
-  -> 双向跨模态注意力: BiCrossAttn
-  -> 分类头: MLP
-  -> 输出真假标签
+Input text T and image I
+  -> Text branch: Embedding + BiLSTM + Transformer
+  -> Image branch: EfficientNet-B0
+  -> Shared Semantic Bridge
+  -> Bidirectional Cross-modal Attention
+  -> MLP classifier
+  -> Fake / Real prediction
 ```
 
-模型与代码的详细对应关系见 [docs/model_implementation.md](docs/model_implementation.md)。
+Detailed mapping from paper modules to implementation is provided in [docs/model_implementation.md](docs/model_implementation.md).
 
-## 数据集
+## Datasets
 
-| 数据集 | 来源论文 | 规模 | 类别特点 | 简要说明 |
-| --- | --- | ---: | --- | --- |
-| Weibo | [Jin et al., ACM MM 2017](https://dl.acm.org/doi/10.1145/3123266.3123454) | 9527 | 相对平衡 | 中文社交媒体谣言检测数据，适合验证图文联合判断能力 |
-| Gossip | [Shu et al., Big Data 2020](https://journals.sagepub.com/doi/10.1089/big.2020.0062) | 12840 | 明显不平衡 | 英文娱乐新闻场景，假新闻占比较高，文本线索通常更强 |
-| CFND | [Zhang et al., IJCAI 2024](https://www.ijcai.org/proceedings/2024/281) | 26664 | 多领域分布 | 中文多领域假新闻数据，适合评估模型泛化能力 |
+This project is organized around three datasets:
 
-由于数据集受原始发布方协议约束，仓库不直接包含完整原始数据。复现前请先按数据集发布方要求获取数据，并参考 [docs/reproducibility.md](docs/reproducibility.md) 放置到脚本配置指定位置。
+| Dataset | Source | Size | Notes |
+| --- | --- | ---: | --- |
+| Weibo | Jin et al., ACM MM 2017 | 9,527 | Chinese social media rumor dataset with relatively balanced labels |
+| Gossip | Shu et al., Big Data 2020 | 12,840 | English entertainment news scenario with clear class imbalance |
+| CFND | Zhang et al., IJCAI 2024 | 26,664 | Chinese cross-domain fake news dataset for generalization analysis |
 
-## 主要结果
+Important:
 
-| 数据集 | 模型 | Accuracy | 假新闻 F1 |
+- the repository does **not** directly include the full raw datasets
+- dataset access may be restricted by the original publishers
+- please obtain the datasets from their official or paper-linked sources before reproduction
+
+See [docs/dataset_statement.md](docs/dataset_statement.md) and [docs/reproducibility.md](docs/reproducibility.md).
+
+## Main Results
+
+| Dataset | Model | Accuracy | Fake F1 |
 | --- | --- | ---: | ---: |
 | CFND | Ours | 0.8489 | 0.8520 |
 | CFND | Concat | 0.8403 | 0.8488 |
@@ -61,11 +101,11 @@
 | Gossip | att-RNN | 0.8558 | 0.9151 |
 | Gossip | MVAE | 0.8516 | 0.9108 |
 
-完整实验记录、单模态对比、消融实验和参数分析见 [docs/experiment_log.md](docs/experiment_log.md)。
+More detailed records are maintained in [docs/experiment_log.md](docs/experiment_log.md).
 
-## 快速复现
+## Quick Start
 
-安装依赖：
+### 1. Create environment
 
 ```bash
 python -m venv .venv
@@ -74,13 +114,41 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-进入主实验目录：
+For Windows PowerShell:
 
-```bash
-cd "code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验并入代码"
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-运行主实验：
+If you also want to run the FaKnow-adapted baselines:
+
+```bash
+pip install -r requirements-faknow.txt
+```
+
+### 2. Prepare data
+
+Before training, check the dataset-related paths in the corresponding training scripts, especially:
+
+- `CFG.dataset_root`
+- `CFG.processed_dir`
+- `CFG.train_csv`
+- `CFG.val_csv`
+- `CFG.test_csv`
+- `CFG.save_root`
+
+### 3. Run the main experiments
+
+Main experiment scripts are located in:
+
+```text
+code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验并入代码/
+```
+
+Run:
 
 ```bash
 python final_train_CFND.py
@@ -88,46 +156,117 @@ python final_train_gossip.py
 python final_train_weibo.py
 ```
 
-运行前请先检查对应脚本顶部的 `CFG.dataset_root`、`CFG.processed_dir`、`CFG.save_root` 等配置。更完整的环境、数据和复现说明见 [docs/reproducibility.md](docs/reproducibility.md)。
+For full reproduction notes, see [docs/reproducibility.md](docs/reproducibility.md).
 
-## 仓库结构
+## Repository Structure
 
 ```text
 .
 ├── README.md
 ├── requirements.txt
 ├── requirements-faknow.txt
+├── CITATION.cff
 ├── docs/
-│   ├── paper_outline.md
-│   ├── reproducibility.md
-│   ├── model_implementation.md
+│   ├── dataset_statement.md
 │   ├── experiment_log.md
 │   ├── figures.md
+│   ├── model_implementation.md
+│   ├── paper_outline.md
+│   ├── reproducibility.md
+│   ├── repository_checklist.md
 │   ├── tables.md
-│   └── repository_checklist.md
+│   └── third_party_code.md
 └── code/
     ├── 01_我的实验代码_主实验+对比+消融/
     ├── 03_我的可视化与分析代码/
     └── 04_第三方基线与参考实现/
 ```
 
-## 文档导航
+## Documentation Guide
 
-- 论文大纲：[docs/paper_outline.md](docs/paper_outline.md)
-- 复现指南：[docs/reproducibility.md](docs/reproducibility.md)
-- 模型实现对照：[docs/model_implementation.md](docs/model_implementation.md)
-- 实验记录：[docs/experiment_log.md](docs/experiment_log.md)
-- 图像材料：[docs/figures.md](docs/figures.md)
-- 表格材料：[docs/tables.md](docs/tables.md)
-- 公开仓库完善清单：[docs/repository_checklist.md](docs/repository_checklist.md)
+- [docs/model_implementation.md](docs/model_implementation.md): maps the paper modules to the actual code
+- [docs/reproducibility.md](docs/reproducibility.md): environment, data preparation, and reproduction workflow
+- [docs/experiment_log.md](docs/experiment_log.md): experiment organization and current result summary
+- [docs/figures.md](docs/figures.md): figure and visualization inventory
+- [docs/tables.md](docs/tables.md): paper and README table sources
+- [docs/dataset_statement.md](docs/dataset_statement.md): dataset access, restrictions, and publication notes
+- [docs/third_party_code.md](docs/third_party_code.md): third-party baseline and reference implementation notes
+- [docs/repository_checklist.md](docs/repository_checklist.md): public release checklist
 
-## 当前结论
+## Code Evidence for the Main Model
 
-实验表明，所提模型在 CFND 和 Weibo 上相较直接拼接和传统多模态基线有更明显提升，说明共享语义桥与双向跨模态交互在复杂图文场景下更有效。在 Gossip 上，文本线索本身较强，复杂融合模块的边际收益相对有限。消融实验进一步表明，双路径文本编码、共享语义桥和双向跨模态注意力共同支撑模型性能。
+The main `CFND` training script contains the core implementation modules:
 
-## 公开说明
+- `CFG = SimpleNamespace(...)`
+- `LSTMTransformerEncoder`
+- `ImageEncoder`
+- `SharedResidualBridge`
+- `BiDirectionalCrossAttentionBlock`
+- `LightweightBiCrossAttentionFusion`
+- `MultiModalModel`
+- `train_one_epoch`
+- `evaluate`
+- `compute_metrics_from_probs`
 
-- 本仓库主要作为研究过程记录、论文附属材料和复现实验入口。
-- 数据集、第三方基线代码和预训练模型可能受各自许可约束，使用前请遵守原始来源协议。
-- 训练产生的权重、日志和大体积中间文件默认不提交到 GitHub；建议通过 release 或外部链接单独归档。
-- 本地压缩包、Word 初稿、临时摘录和私人整理材料不建议提交到公开仓库。
+Representative file:
+
+- `code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验并入代码/final_train_CFND.py`
+
+See [docs/model_implementation.md](docs/model_implementation.md) for the full explanation.
+
+## Public Release Notes
+
+This repository is suitable for public academic presentation, but a strong public release should still confirm the following items before wide sharing:
+
+1. dataset access instructions are complete
+2. third-party code sources and licenses are clearly stated
+3. final architecture figures are exported in high quality
+4. full experiment logs and metric sources are preserved
+5. license choice is explicitly confirmed by the author
+
+At the moment, this repository is best understood as:
+
+- a research record
+- a reproducibility entry point
+- a paper supplementary repository
+
+## Citation
+
+If you use or refer to this repository, please cite the associated paper, thesis, or repository record. A citation template is provided in [CITATION.cff](CITATION.cff).
+
+## License
+
+No open-source license has been selected yet in this repository revision.
+
+Before making the repository broadly public, it is recommended to explicitly choose one of the following:
+
+- `MIT` if you want maximum reuse flexibility
+- `Apache-2.0` if you want an explicit patent grant
+- `All rights reserved` if you only want the repository to function as a research disclosure or supplementary archive
+
+Until a license is added, reuse rights are not clearly granted.
+
+## 中文说明
+
+这是一个以“模型设计与实现记录”为核心的多模态假新闻检测研究仓库，目标不是只放代码，而是把以下内容完整保留下来：
+
+- 模型结构与论文方法的对应关系
+- 主实验、对比实验、消融实验的脚本入口
+- 关键实验结果
+- 复现所需环境与数据说明
+- 图表、表格、论文附属材料
+
+如果你是第一次看这个仓库，建议按下面顺序阅读：
+
+1. `README.md`
+2. `docs/model_implementation.md`
+3. `docs/reproducibility.md`
+4. `docs/experiment_log.md`
+
+如果你准备公开发布这个仓库，建议优先补齐：
+
+1. 最终许可证
+2. 数据获取方式
+3. 第三方代码来源与许可
+4. 最终高清模型结构图
+5. 每个主实验 run 的指标来源文件或摘录

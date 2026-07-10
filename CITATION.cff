@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it using the metadata below."
+title: "multimodal-fake-news-detection"
+type: software
+authors:
+  - family-names: "eli0040802-netizen"
+    given-names: ""
+repository-code: "https://github.com/eli0040802-netizen/multimodal-fake-news-detection"
+abstract: >
+  Research repository for multimodal fake news detection with a shared semantic
+  bridge and bidirectional cross-modal attention. The repository is organized
+  as a public-facing project and as supplementary material for reproducibility.
+keywords:
+  - multimodal fake news detection
+  - fake news detection
+  - cross-modal attention
+  - shared semantic bridge
+  - rumor detection
+license: "NOASSERTION"
