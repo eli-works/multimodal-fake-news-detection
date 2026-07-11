@@ -7,7 +7,7 @@
 [![Task](https://img.shields.io/badge/Task-Multimodal%20Fake%20News%20Detection-2F6F73)](#)
 [![Status](https://img.shields.io/badge/Status-Paper%20Supplementary%20Repository-6B7280)](#)
 
-This repository is organized as a public research project and as supplementary material for a paper or thesis. It records the model design, implementation, experiment scripts, ablation settings, result tables, and reproducibility notes for multimodal fake news detection.
+This repository is organized as a public research project and as supplementary material for a paper or thesis. It records the model design, implementation, experiment scripts, ablation settings, reproducibility notes, and figure/table references for multimodal fake news detection.
 
 ## Abstract
 
@@ -22,31 +22,8 @@ Experiments are organized on three datasets: `Weibo`, `Gossip`, and `CFND`. The 
 - **Paper-oriented repository**: README, experiment logs, model-to-code mapping, reproducibility notes, figure inventory, and table inventory are prepared as supplementary material.
 - **Multimodal architecture**: the model combines sequence-level text modeling, visual semantic extraction, semantic bridging, and bidirectional cross-modal interaction.
 - **Reproducible experiment entry points**: main training scripts are preserved for `CFND`, `Gossip`, and `Weibo`.
-- **Systematic analysis**: the repository records main results, baseline comparisons, unimodal comparisons, ablations, and parameter sensitivity analysis.
+- **Systematic analysis**: the repository records comparison sets, ablations, and parameter sensitivity analysis without turning the README into a result dump.
 - **Publication-aware documentation**: dataset redistribution limits and third-party code attribution are separated into dedicated documents.
-
-## Method Overview
-
-```mermaid
-flowchart LR
-    T["Input Text"] --> E["Token Embedding"]
-    E --> L["BiLSTM"]
-    L --> TR["Transformer Encoder"]
-    TR --> TV["Text Representation"]
-
-    I["Input Image"] --> CNN["EfficientNet-B0"]
-    CNN --> IV["Image Representation"]
-
-    TV --> SB["Shared Residual Bridge"]
-    IV --> SB
-
-    SB --> BCA["Bidirectional Cross-modal Attention"]
-    BCA --> F["Text-Image Fusion"]
-    F --> C["MLP Classifier"]
-    C --> Y["Real / Fake"]
-```
-
-The corresponding code modules are documented in [docs/model_implementation.md](docs/model_implementation.md).
 
 ## Main Contributions
 
@@ -62,39 +39,13 @@ The corresponding code modules are documented in [docs/model_implementation.md](
 4. **Multi-dataset evaluation**
    The model is evaluated on Chinese and English multimodal fake news datasets, with baseline comparisons and ablation studies preserved for reproducibility.
 
-## Results
+## Datasets
 
-### Main Comparison
-
-| Dataset | Model | Accuracy | Fake F1 |
-| --- | --- | ---: | ---: |
-| CFND | Ours | **0.8489** | **0.8520** |
-| CFND | Concat | 0.8403 | 0.8488 |
-| CFND | MVAE | 0.8211 | 0.8272 |
-| CFND | att-RNN | 0.8174 | 0.8251 |
-| CFND | EANN-noadv | 0.8114 | 0.8236 |
-| Weibo | Ours | **0.8432** | **0.8300** |
-| Weibo | Concat | 0.8252 | 0.8051 |
-| Weibo | EANN-noadv | 0.7936 | 0.7749 |
-| Weibo | att-RNN | 0.7756 | 0.7536 |
-| Weibo | MVAE | 0.7720 | 0.7393 |
-| Gossip | TextOnly | 0.8728 | **0.9229** |
-| Gossip | Ours | 0.8696 | 0.9225 |
-| Gossip | EANN-noadv | 0.8678 | 0.9210 |
-| Gossip | Concat | 0.8647 | 0.9182 |
-| Gossip | MVAE | 0.8516 | 0.9108 |
-
-The results suggest that the proposed fusion design is especially helpful on `CFND` and `Weibo`, where text-image consistency and visual evidence contribute more strongly. On `Gossip`, text-only modeling is already very strong, so multimodal fusion provides a smaller marginal gain.
-
-Detailed experiment records are maintained in [docs/experiment_log.md](docs/experiment_log.md).
-
-### Dataset Summary
-
-| Dataset | Size | Real | Fake | Split | Notes |
-| --- | ---: | ---: | ---: | --- | --- |
-| Weibo | 9,527 | 4,779 | 4,748 | 6,777 / 754 / 1,996 | Chinese social media rumor dataset |
-| Gossip | 12,840 | 2,581 | 10,259 | 9,009 / 1,001 / 2,830 | English entertainment news dataset |
-| CFND | 26,664 | 16,394 | 10,270 | 15,997 / 5,333 / 5,334 | Chinese cross-domain fake news dataset |
+| Dataset | Source | Size | Notes |
+| --- | --- | ---: | --- |
+| Weibo | Jin et al., ACM MM 2017 | 9,527 | Chinese social media rumor dataset |
+| Gossip | Shu et al., Big Data 2020 | 12,840 | English entertainment news dataset |
+| CFND | Zhang et al., IJCAI 2024 | 26,664 | Chinese cross-domain fake news dataset |
 
 Raw datasets are not redistributed in this repository. See [docs/dataset_statement.md](docs/dataset_statement.md).
 
@@ -218,7 +169,7 @@ code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验�
 | --- | --- |
 | [docs/model_implementation.md](docs/model_implementation.md) | Maps paper modules to code modules |
 | [docs/reproducibility.md](docs/reproducibility.md) | Environment, dataset paths, and run instructions |
-| [docs/experiment_log.md](docs/experiment_log.md) | Main results, comparisons, ablations, and parameter analysis |
+| [docs/experiment_log.md](docs/experiment_log.md) | Experiment organization and qualitative summaries |
 | [docs/figures.md](docs/figures.md) | Figure inventory and visualization sources |
 | [docs/tables.md](docs/tables.md) | Table sources for README, paper, and defense materials |
 | [docs/dataset_statement.md](docs/dataset_statement.md) | Dataset access and redistribution notes |
