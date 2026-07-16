@@ -1,201 +1,202 @@
-# multimodal-fake-news-detection
+# 基于共享语义桥与双向跨模态注意力的多模态假新闻检测模型
 
-**A multimodal fake news detection model with a shared semantic bridge and bidirectional cross-modal attention.**
+这是一个面向 GitHub 用户整理的项目仓库，主要用于展示多模态假新闻检测模型的核心实现、实验脚本组织方式以及与论文内容对应的说明文档。
 
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.5+-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![Task](https://img.shields.io/badge/Task-Multimodal%20Fake%20News%20Detection-2F6F73)](#)
-[![Status](https://img.shields.io/badge/Status-Paper%20Supplementary%20Repository-6B7280)](#)
+## 项目简介
 
-This repository is organized as a public research project and as supplementary material for a paper or thesis. It records the model design, implementation, experiment scripts, ablation settings, reproducibility notes, and figure/table references for multimodal fake news detection.
+本项目围绕多模态假新闻检测任务展开，核心模型结合了：
 
-## Abstract
+- `BiLSTM + Transformer` 双路径文本编码
+- `EfficientNet-B0` 图像特征提取
+- 共享语义桥 `SharedResidualBridge`
+- 双向跨模态注意力 `BiDirectionalCrossAttentionBlock`
 
-Fake news on social media is often expressed through both text and images. Text-only models may overlook misleading or contradictory visual evidence, while image-only models cannot fully capture stance, claims, and contextual semantics in the text. This project studies how to jointly model textual content, visual evidence, and cross-modal consistency.
+仓库重点保留模型主体实现与实验入口，便于阅读、整理和后续公开归档。
 
-The proposed model combines a `BiLSTM + Transformer` text encoder, an `EfficientNet-B0` image encoder, a shared residual semantic bridge, and a bidirectional cross-modal attention module. The shared bridge performs coarse semantic alignment between text and image features, while the bidirectional attention block captures fine-grained interaction in both text-to-image and image-to-text directions.
+## 仓库适合谁
 
-Experiments are organized on three datasets: `Weibo`, `Gossip`, and `CFND`. The repository also includes baseline comparisons, unimodal comparisons, ablation studies, parameter analysis, and documentation for reproducing the reported results.
+- 想快速查看该模型整体实现思路的读者
+- 想定位主模型、基线模型、消融模型代码入口的使用者
+- 想根据论文结构对照代码实现的同学
+- 想基于现有实验脚本继续整理公开版项目的作者本人
 
-## Highlights
+## 当前公开内容
 
-- **Paper-oriented repository**: README, experiment logs, model-to-code mapping, reproducibility notes, figure inventory, and table inventory are prepared as supplementary material.
-- **Multimodal architecture**: the model combines sequence-level text modeling, visual semantic extraction, semantic bridging, and bidirectional cross-modal interaction.
-- **Reproducible experiment entry points**: main training scripts are preserved for `CFND`, `Gossip`, and `Weibo`.
-- **Systematic analysis**: the repository records comparison sets, ablations, and parameter sensitivity analysis without turning the README into a result dump.
-- **Publication-aware documentation**: dataset redistribution limits and third-party code attribution are separated into dedicated documents.
+当前仓库主要包含以下内容：
 
-## Main Contributions
+- 主模型训练脚本
+- 基线模型与对比模型训练脚本
+- 消融实验训练脚本
+- 模型设计与代码实现对照文档
+- 论文大纲、图表说明、实验记录等文档
+- 第三方参考实现与基线参考代码
 
-1. **Dual-path text representation**
-   The text branch combines `BiLSTM` and `Transformer` so that the model can capture both local sequential context and global semantic dependency.
+当前仓库不以“完整复现实验环境”作为唯一目标，因此原始数据、完整指标归档、可视化产物和数据处理过程不会作为首页重点展示内容。
 
-2. **Shared semantic bridge**
-   A shared residual mapping is used to reduce the modality gap between textual and visual features before deeper fusion.
+## 快速导航
 
-3. **Bidirectional cross-modal attention**
-   The fusion block models both text-to-image and image-to-text interactions, helping the model capture consistency, complementarity, and conflict between modalities.
+- 论文大纲：[docs/paper_outline.md](docs/paper_outline.md)
+- 模型实现对照：[docs/model_implementation.md](docs/model_implementation.md)
+- 复现说明：[docs/reproducibility.md](docs/reproducibility.md)
+- 实验记录：[docs/experiment_log.md](docs/experiment_log.md)
+- 图表说明：[docs/figures.md](docs/figures.md)
+- 表格说明：[docs/tables.md](docs/tables.md)
+- 数据集说明：[docs/dataset_statement.md](docs/dataset_statement.md)
+- 第三方代码说明：[docs/third_party_code.md](docs/third_party_code.md)
+- 仓库整理检查清单：[docs/repository_checklist.md](docs/repository_checklist.md)
 
-4. **Multi-dataset evaluation**
-   The model is evaluated on Chinese and English multimodal fake news datasets, with baseline comparisons and ablation studies preserved for reproducibility.
+## 代码结构
 
-## Datasets
-
-| Dataset | Source | Size | Notes |
-| --- | --- | ---: | --- |
-| Weibo | Jin et al., ACM MM 2017 | 9,527 | Chinese social media rumor dataset |
-| Gossip | Shu et al., Big Data 2020 | 12,840 | English entertainment news dataset |
-| CFND | Zhang et al., IJCAI 2024 | 26,664 | Chinese cross-domain fake news dataset |
-
-Raw datasets are not redistributed in this repository. See [docs/dataset_statement.md](docs/dataset_statement.md).
-
-## Reproduction
-
-### Environment
-
-Recommended environment:
-
-| Item | Version |
-| --- | --- |
-| Python | 3.10+ |
-| PyTorch | 2.5+ |
-| CUDA | 12.x, if using GPU |
-| GPU memory | 24 GB recommended; reduce batch size for smaller GPUs |
-
-Install dependencies:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+```text
+code/
+|-- 01_我的实验代码_主实验+对比+消融/
+|   |-- 对比实验代码/
+|   |   |-- 主实验并入代码/
+|   |   |-- train_eann_noadv_*.py
+|   |   |-- train_mvae_*.py
+|   |   `-- train_textonly_*.py
+|   `-- 消融实验代码/
+|       |-- final_train_*_lstm_only.py
+|       |-- final_train_*_transformer_only.py
+|       |-- final_train_*_wosb.py
+|       `-- final_train_*_wobicross.py
+|-- 03_我的可视化与分析代码/
+`-- 04_第三方基线与参考实现/
 ```
 
-Windows PowerShell:
+## 代码分类说明
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
+### 1. 主模型代码
 
-Optional FaKnow baseline dependencies:
-
-```bash
-pip install -r requirements-faknow.txt
-```
-
-### Data Preparation
-
-Before running experiments, obtain the datasets from their original sources and check the dataset paths in the corresponding training scripts:
-
-- `CFG.dataset_root`
-- `CFG.processed_dir`
-- `CFG.train_csv`
-- `CFG.val_csv`
-- `CFG.test_csv`
-- `CFG.save_root`
-
-The label convention used by the experiments is `0 = real` and `1 = fake`. Evaluation treats `fake` as the positive class.
-
-### Run Main Experiments
-
-Main experiment scripts are located in:
+主模型脚本位于：
 
 ```text
 code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验并入代码/
 ```
 
-Run:
+核心入口包括：
 
-```bash
-python final_train_CFND.py
-python final_train_gossip.py
-python final_train_weibo.py
+- `final_train_CFND.py`
+- `final_train_gossip.py`
+- `final_train_weibo.py`
+
+这些脚本中包含主模型的大部分核心模块，例如：
+
+- `LSTMTransformerEncoder`
+- `ImageEncoder`
+- `SharedResidualBridge`
+- `BiDirectionalCrossAttentionBlock`
+- `LightweightBiCrossAttentionFusion`
+- `MultiModalModel`
+
+### 2. 基线模型与对比模型代码
+
+当前仓库中的对比实验脚本主要包括：
+
+- `train_eann_noadv_cfnd.py`
+- `train_eann_noadv_gossip.py`
+- `train_eann_noadv_weibo.py`
+- `train_mvae_cfnd.py`
+- `train_mvae_gossip.py`
+- `train_mvae_weibo.py`
+- `train_textonly_cfnd.py`
+- `train_textonly_gossip.py`
+- `train_textonly_weibo.py`
+- `final_train_*_concat.py`
+- `final_train_*_attrnn.py`
+- `final_train_*_image_only.py`
+
+如果你是第一次阅读本仓库，建议优先看主模型脚本，再看这些对比实现。
+
+### 3. 消融模型代码
+
+消融实验脚本位于：
+
+```text
+code/01_我的实验代码_主实验+对比+消融/消融实验代码/
 ```
 
-For full details, see [docs/reproducibility.md](docs/reproducibility.md).
+主要变体包括：
 
-## Code Map
+- `*_lstm_only.py`
+- `*_transformer_only.py`
+- `*_wosb.py`
+- `*_wobicross.py`
 
-The main implementation is represented by the following modules in the `final_train_*` scripts:
+分别对应：
 
-| Paper component | Code module |
-| --- | --- |
-| Hyperparameter and path configuration | `CFG = SimpleNamespace(...)` |
-| Text encoder | `LSTMTransformerEncoder` |
-| Image encoder | `ImageEncoder` |
-| Shared semantic bridge | `SharedResidualBridge` |
-| Bidirectional cross-modal attention | `BiDirectionalCrossAttentionBlock` |
-| Fusion module | `LightweightBiCrossAttentionFusion` |
-| End-to-end classifier | `MultiModalModel` |
-| Training loop | `train_one_epoch` |
-| Evaluation | `evaluate`, `compute_metrics_from_probs` |
+- 仅保留 LSTM 文本路径
+- 仅保留 Transformer 文本路径
+- 去掉共享语义桥
+- 去掉双向跨模态注意力
 
-Representative entry file:
+## 数据集来源
+
+本项目实验涉及以下数据集，具体获取方式请参考原始论文或对应发布页面：
+
+| 数据集 | 来源论文 | 简要说明 |
+| --- | --- | --- |
+| Weibo | [Jin et al., ACM MM 2017](https://dl.acm.org/doi/10.1145/3123266.3123454) | 中文社交媒体谣言检测数据 |
+| Gossip | [Shu et al., Big Data 2020](https://journals.sagepub.com/doi/10.1089/big.2020.0062) | FakeNewsNet 中的 GossipCop 子集 |
+| CFND | [Zhang et al., IJCAI 2024](https://www.ijcai.org/proceedings/2024/281) | 中文多领域多模态假新闻检测数据 |
+
+说明：
+
+- 本仓库不直接重新分发原始数据集
+- 数据集路径通常在各训练脚本中的 `CFG` 配置里指定
+- 运行前需要根据你本地的数据存放位置修改相应路径
+
+## 使用方式
+
+如果你只想看主模型，建议按下面顺序阅读：
+
+1. 查看 [docs/model_implementation.md](docs/model_implementation.md)
+2. 打开 `final_train_CFND.py`
+3. 再对照 `final_train_gossip.py` 和 `final_train_weibo.py` 看数据集差异
+4. 最后再看基线模型与消融模型脚本
+
+如果你想运行脚本，建议先确认：
+
+- Python 与 PyTorch 环境已准备好
+- 数据集路径已正确配置
+- 训练脚本中的 `CFG` 参数符合你的机器环境
+
+## 主模型代码入口
+
+代表性入口文件：
 
 ```text
 code/01_我的实验代码_主实验+对比+消融/对比实验代码/主实验并入代码/final_train_CFND.py
 ```
 
-## Repository Structure
+这个脚本中同时包含：
 
-```text
-.
-|-- README.md
-|-- CITATION.cff
-|-- requirements.txt
-|-- requirements-faknow.txt
-|-- docs/
-|   |-- dataset_statement.md
-|   |-- experiment_log.md
-|   |-- figures.md
-|   |-- model_implementation.md
-|   |-- paper_outline.md
-|   |-- reproducibility.md
-|   |-- repository_checklist.md
-|   |-- tables.md
-|   `-- third_party_code.md
-`-- code/
-    |-- 01_我的实验代码_主实验+对比+消融/
-    |-- 03_我的可视化与分析代码/
-    `-- 04_第三方基线与参考实现/
-```
+- 配置定义
+- 数据集读取
+- 文本与图像编码模块
+- 融合模块
+- 训练与评估流程
 
-## Supplementary Materials
+如果后续继续公开整理，建议把这些内容进一步拆成：
 
-| Document | Purpose |
-| --- | --- |
-| [docs/model_implementation.md](docs/model_implementation.md) | Maps paper modules to code modules |
-| [docs/reproducibility.md](docs/reproducibility.md) | Environment, dataset paths, and run instructions |
-| [docs/experiment_log.md](docs/experiment_log.md) | Experiment organization and qualitative summaries |
-| [docs/figures.md](docs/figures.md) | Figure inventory and visualization sources |
-| [docs/tables.md](docs/tables.md) | Table sources for README, paper, and defense materials |
-| [docs/dataset_statement.md](docs/dataset_statement.md) | Dataset access and redistribution notes |
-| [docs/third_party_code.md](docs/third_party_code.md) | Third-party baseline and reference implementation notes |
-| [docs/repository_checklist.md](docs/repository_checklist.md) | Public release checklist |
+- `models/`
+- `datasets/`
+- `trainers/`
+- `configs/`
 
-## Publication Notes
+## 当前仓库状态
 
-This repository is suitable as a paper or thesis companion repository, but a final public release should still confirm:
+目前这个仓库更偏向“研究整理版”而不是“发布版框架工程”，因此会保留一些实验阶段形成的目录命名与脚本形态。  
+如果后续要进一步公开给更多 GitHub 用户使用，建议继续做以下整理：
 
-1. dataset download or access instructions
-2. third-party code source links and license compatibility
-3. final high-resolution model architecture figures
-4. full metric provenance from each training run
-5. the final repository license
+- 统一脚本命名
+- 抽离公共模型模块
+- 去掉不必要的结果记录逻辑
+- 分离数据处理与训练逻辑
+- 增加依赖说明和最小可运行示例
 
-## Citation
+## 说明
 
-If this repository is useful for your work, please cite the associated paper, thesis, or repository record. A citation template is provided in [CITATION.cff](CITATION.cff).
-
-## License
-
-No open-source license has been selected yet. Until a license is added, reuse rights are not clearly granted.
-
-Recommended choices:
-
-- `MIT` for broad code reuse
-- `Apache-2.0` for broad reuse with an explicit patent grant
-- `All rights reserved` if this repository is only intended as a research disclosure or supplementary archive
+- 首页 README 主要服务 GitHub 访客，不再按论文摘要形式组织
+- 更详细的论文内容、图表说明和实验记录统一放在 `docs/` 下
+- 若后续继续整理公开版代码，建议优先围绕“主模型 / 基线模型 / 消融模型”三类目录做瘦身
